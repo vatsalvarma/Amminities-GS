@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment & Appreciations - GreenSiri</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: #0b0c10; color: #fff; overflow-x: hidden; scroll-behavior: smooth; }
+
+        /* ================================================
+           SECTION 0 — SQUARE GALLERY (NEW)
+           ================================================ */
+        .sec-gallery {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: #0d0c0b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Warm radial glow */
+        .sec-gallery::before {
+            content: '';
+            position: absolute;
+            width: 900px;
+            height: 900px;
+            border-radius: 50%;
+            background: radial-gradient(circle at center,
+                rgba(100, 60, 20, 0.22) 0%,
+                rgba(60, 35, 10, 0.1) 45%,
+                transparent 70%);
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        /* Subtle grain texture overlay */
+        .sec-gallery::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            background-size: 180px;
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .gallery-header {
+            position: relative;
+            z-index: 5;
+            text-align: center;
+            margin-bottom: 54px;
+        }
+
+        .gallery-tag {
+            font-size: 10px;
+            letter-spacing: 6px;
+            color: rgba(196, 149, 106, 0.55);
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .gallery-title {
+            font-size: 44px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 1px;
+            line-height: 1.1;
+        }
+
+        .gallery-title em {
+            font-style: normal;
+            color: #c4956a;
+        }
+
+        /* ---- Cards Track ---- */
+        .gallery-track {
+            position: relative;
+            width: 100%;
+            height: 430px;
+            z-index: 5;
+        }
+
+        .g-card {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 350px;
+            height: 430px;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            transition:
+                transform 0.85s cubic-bezier(0.23, 1, 0.32, 1),
+                opacity 0.85s cubic-bezier(0.23, 1, 0.32, 1),
+                box-shadow 0.5s ease;
+            will-change: transform, opacity;
+        }
+
+        .g-img {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.7s ease;
+        }
+
+        .g-card:hover .g-img { transform: scale(1.05); }
+
+        .g-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to top,
+                rgba(0, 0, 0, 0.88) 0%,
+                rgba(0, 0, 0, 0.2) 55%,
+                transparent 100%
+            );
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 30px 26px;
+        }
+
+        .g-sub {
+            font-size: 10px;
+            letter-spacing: 3.5px;
+            color: rgba(196, 149, 106, 0.85);
+            text-transform: uppercase;
+            margin-bottom: 7px;
+        }
+
+        .g-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Glass border on active card */
+        .g-card[data-pos="center"]::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            border: 1px solid rgba(196, 149, 106, 0.3);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* ---- Position States (CSS does the animation, JS sets data-pos) ---- */
+        .g-card[data-pos="center"] {
+            transform: translateX(-50%) scale(1);
+            opacity: 1;
+            z-index: 10;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(196,149,106,0.1);
+        }
+        .g-card[data-pos="right"] {
+            transform: translateX(calc(-50% + 380px)) scale(0.78);
+            opacity: 0.5;
+            z-index: 6;
+        }
+        .g-card[data-pos="left"] {
+            transform: translateX(calc(-50% - 380px)) scale(0.78);
+            opacity: 0.5;
+            z-index: 6;
+        }
+        .g-card[data-pos="right2"] {
+            transform: translateX(calc(-50% + 680px)) scale(0.60);
+            opacity: 0.12;
+            z-index: 3;
+            pointer-events: none;
+        }
+        .g-card[data-pos="left2"] {
+            transform: translateX(calc(-50% - 680px)) scale(0.60);
+            opacity: 0.12;
+            z-index: 3;
+            pointer-events: none;
+        }
+        .g-card[data-pos="hidden"] {
+            transform: translateX(-50%) scale(0.45);
+            opacity: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .g-card[data-pos="right"]:hover { opacity: 0.78; }
+        .g-card[data-pos="left"]:hover  { opacity: 0.78; }
+
+        /* ---- Gallery Controls ---- */
+        .gallery-controls {
+            position: relative;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-top: 44px;
+        }
+
+        .g-nav-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #fff;
+            font-size: 17px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .g-nav-btn:hover {
+            background: rgba(196, 149, 106, 0.2);
+            border-color: rgba(196, 149, 106, 0.4);
+            transform: scale(1.1);
+        }
+
+        .g-dots {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .g-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.38s ease;
+            cursor: pointer;
+        }
+
+        .g-dot.active {
+            width: 24px;
+            border-radius: 3px;
+            background: #c4956a;
+        }
+
+
+
+    </style>
+</head>
+<body>
+
+<!-- ================================================
+     SECTION 0: SQUARE GALLERY (NEW)
+     ================================================ -->
+<section class="sec-gallery">
+    <div class="gallery-header">
+        <div class="gallery-tag">GREENSIRI PRESENTS</div>
+        <h1 class="gallery-title">OUR INVESTMENT <em>AMMENITIES</em></h1>
+    </div>
+
+    <div class="gallery-track" id="gallery-track">
+        <!-- JS injected cards -->
+    </div>
+
+    <div class="gallery-controls">
+        <button class="g-nav-btn" id="g-prev">←</button>
+        <div class="g-dots" id="g-dots"></div>
+        <button class="g-nav-btn" id="g-next">→</button>
+    </div>
+</section>
+
+
+
+
+
+<script>
+    /* ================================================
+       SECTION 0 — SQUARE GALLERY
+       ================================================ */
+    const galleryData = [
+        {
+            name: "FARMHOUSE RETREATS",
+            sub: "MONTHLY INCOME",
+            img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80"
+        },
+        {
+            name: "AGRICULTURAL LANDS",
+            sub: "QUARTERLY YIELD",
+            img: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=80"
+        },
+        {
+            name: "VACATION VILLAS",
+            sub: "HALF-YEARLY INCOME",
+            img: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80"
+        },
+        {
+            name: "RESIDENTIAL PLOTS",
+            sub: "YEARLY APPRECIATION",
+            img: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80"
+        },
+        {
+            name: "CAPITAL ASSETS",
+            sub: "LONG TERM GROWTH",
+            img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80"
+        },
+        {
+            name: "HERITAGE ESTATES",
+            sub: "LIFETIME LEGACY",
+            img: "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&q=80"
+        }
+    ];
+
+    let gActive = 0;
+    const GN = galleryData.length;
+    const gTrackEl = document.getElementById('gallery-track');
+    const gDotsEl  = document.getElementById('g-dots');
+    let gCards = [], gDots = [];
+    let gAutoInterval;
+
+    function gGetPos(i) {
+        const diff = ((i - gActive) % GN + GN) % GN;
+        if (diff === 0)        return 'center';
+        if (diff === 1)        return 'right';
+        if (diff === 2)        return 'right2';
+        if (diff === GN - 1)   return 'left';
+        if (diff === GN - 2)   return 'left2';
+        return 'hidden';
+    }
+
+    function gUpdate() {
+        gCards.forEach((card, i) => card.setAttribute('data-pos', gGetPos(i)));
+        gDots.forEach((dot, i) => dot.className = 'g-dot' + (i === gActive ? ' active' : ''));
+    }
+
+    function gSetActive(idx) {
+        gActive = ((idx % GN) + GN) % GN;
+        gUpdate();
+    }
+
+    function gResetAuto() {
+        clearInterval(gAutoInterval);
+        gAutoInterval = setInterval(() => gSetActive(gActive + 1), 5000);
+    }
+
+    (function initGallery() {
+        galleryData.forEach((d, i) => {
+            const card = document.createElement('div');
+            card.className = 'g-card';
+            card.innerHTML = `
+                <div class="g-img" style="background-image:url('${d.img}')"></div>
+                <div class="g-overlay">
+                    <div class="g-sub">${d.sub}</div>
+                    <div class="g-name">${d.name}</div>
+                </div>`;
+            card.addEventListener('click', () => {
+                const pos = gGetPos(i);
+                if (pos === 'left')  { gSetActive(gActive - 1); gResetAuto(); }
+                if (pos === 'right') { gSetActive(gActive + 1); gResetAuto(); }
+            });
+            gTrackEl.appendChild(card);
+            gCards.push(card);
+
+            const dot = document.createElement('div');
+            dot.className = 'g-dot';
+            dot.addEventListener('click', () => { gSetActive(i); gResetAuto(); });
+            gDotsEl.appendChild(dot);
+            gDots.push(dot);
+        });
+
+        gUpdate();
+
+        // Swipe / drag
+        let gDragStart = 0;
+        gTrackEl.addEventListener('touchstart', e => { gDragStart = e.touches[0].clientX; }, { passive: true });
+        gTrackEl.addEventListener('touchend', e => {
+            const dx = e.changedTouches[0].clientX - gDragStart;
+            if (Math.abs(dx) > 55) { gSetActive(gActive + (dx < 0 ? 1 : -1)); gResetAuto(); }
+        });
+        let gMouseDown = false;
+        gTrackEl.addEventListener('mousedown', e => { gDragStart = e.clientX; gMouseDown = true; });
+        gTrackEl.addEventListener('mouseup', e => {
+            if (!gMouseDown) return; gMouseDown = false;
+            const dx = e.clientX - gDragStart;
+            if (Math.abs(dx) > 55) { gSetActive(gActive + (dx < 0 ? 1 : -1)); gResetAuto(); }
+        });
+
+        document.getElementById('g-prev').addEventListener('click', () => { gSetActive(gActive - 1); gResetAuto(); });
+        document.getElementById('g-next').addEventListener('click', () => { gSetActive(gActive + 1); gResetAuto(); });
+
+        gResetAuto();
+    })();
+
+
+   
+</script>
+</body>
+</html>
